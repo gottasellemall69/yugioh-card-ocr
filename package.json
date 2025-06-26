@@ -10,19 +10,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "formidable": "^3.5.4",
+    "fuse.js": "^7.0.0",
     "next": "^14.0.0",
+    "papaparse": "^5.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tesseract.js": "^5.1.1",
-    "papaparse": "^5.5.3",
-    "fuse.js": "^7.0.0"
+    "tesseract.js": "^5.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/papaparse": "^5.3.14",
+    "autoprefixer": "^10.0.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.0.0",
-    "autoprefixer": "^10.0.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.1"
   }
