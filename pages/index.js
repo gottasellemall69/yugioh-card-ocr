@@ -9,8 +9,8 @@ export default function Home() {
   const [ processing, setProcessing ] = useState( false );
   const [ logs, setLogs ] = useState( [] );
   const [ filter, setFilter ] = useState( 'all' );
-  const [ cropName, setCropName ] = useState( { x: 50, y: 50, width: 700, height: 100 } );
-  const [ cropEffect, setCropEffect ] = useState( { x: 50, y: 650, width: 700, height: 250 } );
+  const [ cropName, setCropName ] = useState( { x: 150, y: 200, width: 1300, height: 190 } );
+  const [ cropEffect, setCropEffect ] = useState( { x: 150, y: 1500, width: 1300, height: 350 } );
   const [ useAutoCrop, setUseAutoCrop ] = useState( false );
   const [ activePreview, setActivePreview ] = useState( null );
   const dropRef = useRef( null ), overlayRef = useRef( null );
@@ -200,7 +200,7 @@ export default function Home() {
   const filteredResults = results.filter( r => filter === 'all' || ( filter === 'matched' && r.matched ) || ( filter === 'unmatched' && !r.matched ) );
   return (
     <div className="space-y-6 p-6 max-w-7xl mx-auto text-black">
-      <h1 className="text-3xl font-bold text-indigo-700">🃏 Yu-Gi-Oh OCR Matcher</h1>
+      <h1 className="text-3xl font-bold text-indigo-700">Yu-Gi-Oh OCR Matcher</h1>
 
       <div className="bg-white p-4 rounded shadow">
         <h2 className="font-semibold mb-2">1. Upload Inventory CSV</h2>
@@ -226,7 +226,7 @@ export default function Home() {
 
       { activePreview && (
         <div className="bg-white p-4 rounded shadow mt-4">
-          <h3 className="font-semibold mb-2">🔍 Preview & Overlay</h3>
+          <h3 className="font-semibold mb-2">Preview & Overlay</h3>
           <canvas ref={ overlayRef } className="max-w-full border" />
           <div className="mt-2">
             <label className="inline-flex items-center">
@@ -239,9 +239,9 @@ export default function Home() {
 
       { !useAutoCrop && (
         <div className="bg-white p-4 rounded shadow space-y-3">
-          <h3 className="font-semibold">✂️ Manual Cropping</h3>
+          <h3 className="font-semibold">Manual Cropping</h3>
 
-          <p className="text-sm text-black font-semibold mt-2">🪪 Card Name Region</p>
+          <p className="text-sm text-black font-semibold mt-2">Card Name Region</p>
           <div className="grid grid-cols-4 gap-2">
             { [ 'x', 'y', 'width', 'height' ].map( ( key ) => (
               <input
@@ -258,7 +258,7 @@ export default function Home() {
             ) ) }
           </div>
 
-          <p className="text-sm text-black font-semibold mt-4">📜 Effect Text Region</p>
+          <p className="text-sm text-black font-semibold mt-4">Effect Text Region</p>
           <div className="grid grid-cols-4 gap-2">
             { [ 'x', 'y', 'width', 'height' ].map( ( key ) => (
               <input
@@ -288,7 +288,7 @@ export default function Home() {
       { results.length > 0 && (
         <>
           <div className="flex justify-between items-center mt-6">
-            <h2 className="text-2xl font-semibold text-white">📊 Results</h2>
+            <h2 className="text-2xl font-semibold text-white">Results</h2>
             <div className="space-x-2">
               <button onClick={ () => setFilter( "all" ) } className="px-3 py-1 bg-gray-700 text-white rounded">All</button>
               <button onClick={ () => setFilter( "matched" ) } className="px-3 py-1 bg-green-700 text-white rounded">Matched</button>
@@ -325,7 +325,7 @@ export default function Home() {
 
       { logs.length > 0 && (
         <div className="mt-8 bg-white p-4 rounded shadow max-h-64 overflow-y-auto">
-          <h3 className="font-semibold">🪵 Logs</h3>
+          <h3 className="font-semibold">Logs</h3>
           <pre className="text-xs text-gray-700 whitespace-pre-wrap">{ logs.join( "\n" ) }</pre>
         </div>
       ) }

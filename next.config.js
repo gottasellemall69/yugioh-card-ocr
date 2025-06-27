@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
-    optimizePackageImports: ['tesseract.js']
+    optimizePackageImports: [ 'tesseract.js' ]
   }
 };
 
