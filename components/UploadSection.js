@@ -1,63 +1,87 @@
-// components/UploadSection.js
-import { useCallback, useRef } from 'react';
+// components/upload-section.js
 
-export default function UploadSection( { onFilesSelected } ) {
-    const fileInputRef = useRef( null );
+import React, { useState } from 'react';
+import { processCardImage } from '../utils/ocr-utils';
+import ImagePreviewGrid from './image-preview-grid';
+import ProgressSection from './progress-section';
+import ResultsSection from './results-section';
 
-    const handleDragOver = useCallback( ( e ) => {
-        e.preventDefault();
-        e.currentTarget.classList.add( 'border-primary', 'scale-105' );
-    }, [] );
+export function UploadSection( { defaultRegions } ) {
+    const [ files, setFiles ] = useState( [] );
+    const [ customRegions, setCustomRegions ] = useState( {} );
+    const [ results, setResults ] = useState( [] );
+    const [ isProcessing, setIsProcessing ] = useState( false );
+    const [ log, setLog ] = useState( [] );
 
-    const handleDragLeave = useCallback( ( e ) => {
-        e.preventDefault();
-        e.currentTarget.classList.remove( 'border-primary', 'scale-105' );
-    }, [] );
+    const handleFiles = ( e ) => {
+        const selected = Array.from( e.target.files );
+        setFiles( ( prev ) => [ ...prev, ...selected ] );
+    };
 
-    const handleDrop = useCallback( ( e ) => {
-        e.preventDefault();
-        e.currentTarget.classList.remove( 'border-primary', 'scale-105' );
-        const files = e.dataTransfer.files;
-        if ( files.length > 0 ) {
-            onFilesSelected( files );
+    const handleImagesUpdate = ( updated ) => {
+        setFiles( updated );
+    };
+
+    const handleRegionsUpdate = ( index, region, allRegionsOverride = null ) => {
+        if ( allRegionsOverride ) {
+            setCustomRegions( allRegionsOverride );
+        } else {
+            setCustomRegions( ( prev ) => ( { ...prev, [ index ]: region } ) );
         }
-    }, [ onFilesSelected ] );
+    };
 
-    const handleFileSelect = useCallback( ( e ) => {
-        const files = e.target.files;
-        if ( files.length > 0 ) {
-            onFilesSelected( files );
+    const logMessage = ( msg ) => {
+        setLog( ( prev ) => [ ...prev, msg ] );
+    };
+
+    const startProcessing = async () => {
+        setIsProcessing( true );
+        setResults( [] );
+        setLog( [] );
+
+        for ( let i = 0; i < files.length; i++ ) {
+            const file = files[ i ];
+            logMessage( `📸 Processing ${ file.name }` );
+            try {
+                const result = await processCardImage(
+                    file,
+                    defaultRegions,
+                    customRegions[ i ],
+                    ( { message } ) => logMessage( message )
+                );
+                setResults( ( prev ) => [ ...prev, result ] );
+                logMessage( `✅ Done: ${ file.name }` );
+            } catch ( err ) {
+                logMessage( `❌ Error: ${ file.name }: ${ err.message }` );
+            }
         }
-    }, [ onFilesSelected ] );
+
+        setIsProcessing( false );
+    };
 
     return (
-        <div className="mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                <h2 className="text-xl font-semibold mb-4">Upload Card Images</h2>
-                <div
-                    className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-primary transition-all cursor-pointer"
-                    onDragOver={ handleDragOver }
-                    onDragLeave={ handleDragLeave }
-                    onDrop={ handleDrop }
-                    onClick={ () => fileInputRef.current?.click() }
-                >
-                    <div className="space-y-4">
-                        <div className="text-6xl">📷</div>
-                        <div>
-                            <p className="text-lg font-medium">Drop card images here or click to browse</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Supports JPG, PNG, WebP</p>
-                        </div>
-                        <input
-                            ref={ fileInputRef }
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            className="hidden"
-                            onChange={ handleFileSelect }
-                        />
-                    </div>
-                </div>
+        <div className="space-y-4">
+            <div>
+                <input type="file" multiple onChange={ handleFiles } accept="image/*" />
             </div>
+
+            <ImagePreviewGrid
+                files={ files }
+                customRegions={ customRegions }
+                onImagesUpdate={ handleImagesUpdate }
+                onRegionsUpdate={ handleRegionsUpdate }
+            />
+
+            <button
+                onClick={ startProcessing }
+                disabled={ isProcessing || files.length === 0 }
+                className="px-4 py-2 bg-blue-600 text-white rounded"
+            >
+                { isProcessing ? 'Processing...' : 'Start OCR' }
+            </button>
+
+            { isProcessing && <ProgressSection logEntries={ log } /> }
+            { !isProcessing && results.length > 0 && <ResultsSection results={ results } /> }
         </div>
     );
 }

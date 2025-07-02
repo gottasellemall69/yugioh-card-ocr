@@ -1,4 +1,4 @@
-.next/*
+.next\*
 # Logs
 logs
 *.log
@@ -24,3 +24,4 @@ dist-ssr
 *.sln
 *.sw?
 .env
+repomix-*
